@@ -2,6 +2,8 @@ import math
 import os
 import time
 import webbrowser
+
+import pyautogui
 from pycaw import pycaw
 import VolumeControls
 import BrightnessControls
@@ -14,6 +16,9 @@ import HandTrackingModule
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import subprocess
 import getpass
+import win32api
+import win32con
+from win32con import VK_MEDIA_PLAY_PAUSE, KEYEVENTF_EXTENDEDKEY, VK_SNAPSHOT
 
 # volume metrics
 devices = pycaw.AudioUtilities.GetSpeakers()
@@ -95,11 +100,10 @@ class HandDetectorClass():
             x1, y1 = self.lmList1[8][1], self.lmList1[8][2]
             x2, y2 = self.lmList1[12][1], self.lmList1[12][2]
             length = math.hypot(x2 - x1, y2 - y1)
-            print(length)
             if length>20 and length<90:
-                if self.process_exists("Telegram.exe") == False:
-                    # self.talk("opening telegram")
-                    os.startfile("C:\Telegram Desktop\Telegram.exe")
+                print("check")
+                # os.system("shutdown /r /t 1")
+                win32api.keybd_event(VK_MEDIA_PLAY_PAUSE, 0, KEYEVENTF_EXTENDEDKEY, 0)
 
         elif len(self.hands) == 1 and self.handType1 == "Right" and self.fingers1==[0,1,1,0,0]:
             print(self.fingers1)
@@ -107,10 +111,10 @@ class HandDetectorClass():
             x2, y2 = self.lmList1[12][1], self.lmList1[8][2]
             length = math.hypot(x2-x1, y2-y1)
             # print(length)
-            print(self.process_exists("chrome.exe"))
             if length>20 and length<90 :
-                os.system("shutdown /s /t 1")
-                # os.system("shutdown /r /t 1")
+                print("check")
+                # os.system("shutdown /s /t 1")
+                win32api.keybd_event(win32con.VK_SNAPSHOT, 0)
 
         elif len(self.hands) == 1 and self.handType1 == "Right" and self.fingers1==[1,1,1,1,1]:
             print(self.fingers1)
@@ -132,12 +136,10 @@ class HandDetectorClass():
 
     def DoActivity(self, x):
         if self.x in range(400, 500, 2):
-            self.openWhatsApp()
+            self.powercontrols()
 
-    def openWhatsApp(self):
-        if self.process_exists("Chrome.exe") == False:
-            self.talk("Opening Whatsapp")
-            webbrowser.open("https://web.whatsapp.com")
+    def powercontrols(self):
+        os.system("shutdown /r /t 1")
 
 
 obj = HandDetectorClass()
